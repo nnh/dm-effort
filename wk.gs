@@ -1,4 +1,5 @@
 function setChartOptions(){
+  /** Changing the Color Scheme of an Active Sheet's Pie Chart */
   const ss = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const targetCharts = ss.getCharts();
   if (targetCharts.length > 1){
@@ -10,22 +11,6 @@ function setChartOptions(){
   targetChart = targetChart.modify()
     .setOption('sliceVisibilityThreshold', .2) 
     .setOption('title', '')
-    /*.setOption('slices', {0: {color: grayScale[1]}, 
-                          1: {color: grayScale[2]}, 
-                          2: {color: grayScale[3]}, 
-                          3: {color: grayScale[4]}, 
-                          4: {color: grayScale[5]}, 
-                          5: {color: grayScale[6]}, 
-                          6: {color: grayScale[7]}, 
-                          7: {color: grayScale[8]}, 
-                          8: {color: grayScale[9]}, 
-                          9: {color: grayScale[8]}, 
-                          10: {color: grayScale[7]}, 
-                          11: {color: grayScale[6]}, 
-                          12: {color: grayScale[5]}, 
-                          13: {color: grayScale[4]}, 
-                          14: {color: grayScale[3]}
-                         })*/
     .setOption('slices', sliceColors)
     .build();
   ss.updateChart(targetChart);
