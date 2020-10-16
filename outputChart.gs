@@ -187,7 +187,7 @@ function setColumnName(){
   colName.dataSourceProtocolId = 'D';
   colName.dataSourcePer = 'E';
   colName.protocolIdProtocolId = 'A';
-  colName.protocolIdOrganization = 'G';
+  colName.protocolIdOrganization = 'H';
   colName.dmOfficeItem = 'A';
   colName.dmOfficeCategory = 'B';
   colName.businessHoursName = 'A';
