@@ -40,16 +40,19 @@ function getDataCreateChart(){
                                            '(' + businessHoursSheetName + '!' + colNames.businessHoursStart + ':' + colNames.businessHoursStart + '<=' + colNames.businessHoursTimePerDay + rowNum + ')' + '*' + 
                                            '((' + businessHoursSheetName + '!' + colNames.businessHoursEnd + ':' + colNames.businessHoursEnd + '>=' + colNames.businessHoursTimePerDay + rowNum + ')' + '+' + 
                                             '(' + businessHoursSheetName + '!' + colNames.businessHoursEnd + ':' + colNames.businessHoursEnd + '="")))';
-    const categoryFormula = '=vlookup(' + colNames.dataSourceProtocolId + rowNum + ',' + categorySheetName + '!' + colNames.dmOfficeItem + ':' + colNames.dmOfficeCategory + ',2,false)';
+    const categoryFormula1 = '=vlookup(' + colNames.dataSourceProtocolId + rowNum + ',' + categorySheetName + '!' + colNames.categoryItem + ':' + colNames.categoryCategory + ',2 ,false)';
+    const categoryFormula2 = '=vlookup(' + colNames.dataSourceProtocolId + rowNum + ',' + categorySheetName + '!' + colNames.categoryItem + ':' + colNames.categoryCategory + ',4 ,false)';
     if (rowNum > 1){
       temp.push(workingHoursRateFormula);
       temp.push('=' + colNames.dataSourceEffort + rowNum + '*' + colNames.dataSourcePer + rowNum);
-      temp.push(categoryFormula);
+      temp.push(categoryFormula1);
+      temp.push(categoryFormula2);
     } else {
       /** A first row is a header */ 
       temp.push('勤務割合');
       temp.push('Effort%（補正）');
-      temp.push('カテゴリー');
+      temp.push('研究主宰者');
+      temp.push('研究主宰者＋研究種別');
     }
     return temp;
   });
@@ -93,13 +96,13 @@ function getWorkingHoursRate(inputSheets, outputSheets, colIndex){
 function getCategoryForAggregate(inputSheets, outputSheets, colIndex){
   /** Remove the header */
   const protocolIdValues = new classSetValuesFromRanges(inputSheets.protocolId).targetValues.filter((x, idx) => idx != 0);
-  const protocolIdKeyValue = protocolIdValues.map(x => [x[colIndex.protocolIdProtocolId], x[colIndex.protocolIdOrganization]]);
+  const protocolIdKeyValue = protocolIdValues.map(x => [x[colIndex.protocolIdProtocolId], x[colIndex.protocolIdPresident], x[colIndex.protocolIdStudyType], x[colIndex.protocolIdPresident] + x[colIndex.protocolIdStudyType]]);
   const dmOfficeValues = new classSetValuesFromRanges(inputSheets.dmOffice).targetValues.filter((x, idx) => idx != 0);
-  const dmOfficeKeyValues = dmOfficeValues.map(x => [x[colIndex.dmOfficeItem], x[colIndex.dmOfficeCategory]]);
+  const dmOfficeKeyValues = dmOfficeValues.map(x => [x[colIndex.dmOfficeItem], x[colIndex.dmOfficeCategory], '', x[colIndex.dmOfficeCategory]]);
   /** Remove the blank row */ 
   const categoryValues = protocolIdKeyValue.concat(dmOfficeKeyValues).filter(x => x[0] != '');
   /** Set header */
-  const headerValues = [['items', 'category']];
+  const headerValues = [['items', 'pi', 'study type', 'category']];
   const outputCategory = new classSetValues(headerValues.concat(categoryValues));
   outputCategory.copyFromArrayToRange(outputSheets.category); 
 }
@@ -187,7 +190,9 @@ function setColumnName(){
   colName.dataSourceProtocolId = 'D';
   colName.dataSourcePer = 'E';
   colName.protocolIdProtocolId = 'A';
+  colName.protocolIdPresident = 'G';
   colName.protocolIdOrganization = 'H';
+  colName.protocolIdStudyType = 'I';
   colName.dmOfficeItem = 'A';
   colName.dmOfficeCategory = 'B';
   colName.businessHoursName = 'A';
@@ -196,6 +201,8 @@ function setColumnName(){
   colName.businessHoursStart = 'D';
   colName.businessHoursEnd = 'E';
   colName.businessHoursPer = 'F';
+  colName.categoryItem = 'A';
+  colName.categoryCategory = 'D';
   return colName;
 }
 /**
